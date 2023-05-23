@@ -18,6 +18,9 @@ Q: does myROOTEvent->GetScintRHits()->size() is the same as
 myROOTEvent->GetSlabHit()
 
 *** it is easy to build an method of uniqueness check. but this doesnt work in macro function
+
+
+5-23 add tchain & plot
 */
 
 
@@ -76,7 +79,7 @@ void layerCheck()
         if (numScintHits <4)
         {   
             //reset the array
-            int layerArray[3] = {-1, -1, -1}; //reset the array
+            int layerArray[3] = {-1, -2, -3}; //reset the array
             //save the layer into array
             for(int h=0;h<numScintHits;h++) //h is the index of data in an event
             {
@@ -106,8 +109,8 @@ void layerCheck()
                 }
             }
 
-
-            if (repeatness == false)
+            //(layerArray[2] > -1 means: we only interest about the two or three hit on slab in a event
+            if ((repeatness == false) && (layerArray[2] > -1))
             {
                 cout << "event:" << index << endl;
             }
