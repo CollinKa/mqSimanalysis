@@ -22,6 +22,10 @@ myROOTEvent->GetSlabHit()
 
 5-23 remove tchain from Chaintest.c
 it has weird bug-finished
+
+need to fixed the hard coding
+
+histogram of energy should between 0-13 mEv.q
 */
 
 
@@ -68,10 +72,10 @@ TString fileDir;
 string filename;
 
 
-  for(int i=10;i<100;i++)
+  for(int dataNum=10; dataNum < 999; dataNum++)
   { 
-    fileDir="/net/cms17/cms17r0/schmitz/slabSimMuon/withPhotons/48slab/cosmicdir" + to_string(i) + "/MilliQan.root";
-    filename = "/net/cms17/cms17r0/schmitz/slabSimMuon/withPhotons/48slab/cosmicdir" + to_string(i) + "/MilliQan.root";
+    fileDir="/net/cms17/cms17r0/schmitz/slabSimMuon/withPhotons/48slab/cosmicdir" + to_string(dataNum) + "/MilliQan.root";
+    filename = "/net/cms17/cms17r0/schmitz/slabSimMuon/withPhotons/48slab/cosmicdir" + to_string(dataNum) + "/MilliQan.root";
     
     if (fileExists(filename)) 
     {
@@ -101,10 +105,12 @@ string filename;
     {
         tree->GetEntry(index);
         numScintHits=myROOTEvent->GetScintRHits()->size(); //get the number scintillator hit in an event
-        if (numScintHits <4)
+        
+        //we want to investigate 4 hit in a event now
+        if (numScintHits <5)
         {   
           int layerArray[4] = {-1, -2, -3, -4}; //reset the array
-          float EdepArray[3] = {0,0,0};
+          float EdepArray[4] = {0,0,0,0};
           //save the layer into array
           for(int h=0;h<numScintHits;h++) //h is the index of data in an event
           {
@@ -132,10 +138,10 @@ string filename;
             
             if (repeatness == false)
             {
-                cout << "event:" << index << endl;
+                cout << "dataNum"  << dataNum<< " " <<"event:" << index << endl;
                 for (int i = 0; i < numScintHits; i++)
                 {
-                  cout << "energy dep(MeV): " << EdepArray[i] << endl; //in unit of MeV
+                  if (EdepArray[i]>0) {cout << "energy dep(MeV): " << EdepArray[i] << endl;} //in unit of MeV
                 }
 
 
