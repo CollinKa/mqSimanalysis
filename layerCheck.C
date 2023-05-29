@@ -101,16 +101,35 @@ string filename;
 
 
 
-    for(int index = 0; index < nentries; index++)
+    //for(int index = 0; index < nentries; index++)
+    for(int index = 0; index < 10; index++)   //test
     {
         tree->GetEntry(index);
         numScintHits=myROOTEvent->GetScintRHits()->size(); //get the number scintillator hit in an event
         
         //we want to investigate 4 hit in a event now
-        if (numScintHits <5)
-        {   
-          int layerArray[4] = {-1, -2, -3, -4}; //reset the array
-          float EdepArray[4] = {0,0,0,0};
+
+        //Ryan：there might be 100 scintHits even if only 4 distinct slabs are hit
+        if (numScintHits < 100)
+        {  
+
+          //int layerArray[4] = {-1, -2, -3, -4}; //reset the array
+          //float EdepArray[4] = {0,0,0,0};
+          
+          double edeps[100];
+          int layerArray[100];
+
+          for (int indexJ = 0, indexJ < 100 ,indexJ++)
+          {
+            layerArray = -1 * indexJ -1;
+          }
+          
+          for (int h=0, h<numScintHits, h++){
+          copyNo=rootEvent->GetScintHits->at(h)->GetCopyNo();
+          edep=rootEvent->GetScintHits->at(h)->GetEDep();
+          edeps[copyNo]=edeps[copyNo]+edep;
+          }
+          
           //save the layer into array
           for(int h=0;h<numScintHits;h++) //h is the index of data in an event
           {
