@@ -113,22 +113,21 @@ void layerCheck_V2()
 
                 //current issue add array of pmy hits
                 for (int j = 0; j < 48; j++)
+                {
+                    if (EDEP[j] > 0) 
                     {
-                        if (EDEP[j] > 0) 
-                        {
-                            slapHit++;
-                            layerNum = (j)%4;
-                            int rowNum =(j)/12;
-                            int columnNum = ((j)%12)/4;
 
-                            //cout << "layerNum:" << layerNum << endl;
-                            layerarray[layerNum] += 1;
-                            columnarray[columnNum] += 1;
-                            rowarray[rowNum] += 1;
+                        slapHit++;
+                        layerNum = (j)%4;
+                        int rowNum =(j)/12;
+                        int columnNum = ((j)%12)/4;
 
-                            //
+                        //cout << "layerNum:" << layerNum << endl;
+                        layerarray[layerNum-1] += 1;
+                        columnarray[columnNum-1] += 1;
+                        rowarray[rowNum-1] += 1;
                         }    
-                    }
+                }
 
 
                 //debug for why does the four in a line can't be seen
@@ -215,11 +214,13 @@ void layerCheck_V2()
                     
                     }
                     
-                    
+                    /*
                     if (count == 0)
                     {
                         cout << index << "th event" << " in file " << dataNum << " satisfied the cut(all hits are different layer)" << endl;
                     }
+                    */
+                    
                     
                     
 
