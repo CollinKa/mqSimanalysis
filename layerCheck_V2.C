@@ -40,6 +40,10 @@ void layerCheck_V2()
 {
     TString fileDir;
     string filename;
+    ofstream FOUR("fourInalint.txt");
+    ofstream ONEHIT("oneHitperLayer.txt");
+    ofstream FOUREn("fourInalintEnergy.txt");
+    ofstream ONEHITEn("oneHitperLayerEnergy.txt");
 
     for(int dataNum=10; dataNum < 999; dataNum++) //loop over all withPhoton file
     {
@@ -126,7 +130,7 @@ void layerCheck_V2()
                         layerarray[layerNum-1] += 1;
                         columnarray[columnNum-1] += 1;
                         rowarray[rowNum-1] += 1;
-                        }    
+                    }    
                 }
 
 
@@ -165,7 +169,7 @@ void layerCheck_V2()
 
                 //----
                 //we only insterest about the event that has less or equal to 4 hits
-                if (slapHit < 5)
+                if (slapHit == 4)
                 {   
                     int count =0;
                     bool columnCheck = false;
@@ -199,9 +203,9 @@ void layerCheck_V2()
 
 
                     if ((rowCheck ==  true) && (columnCheck == true))
-                        {
-                            FourInline = true;
-                        }
+                    {
+                        FourInline = true;
+                    }
 
                     
 
@@ -210,16 +214,36 @@ void layerCheck_V2()
                     if ((count == 0) && (FourInline == true))
                     {
                         //cout << index << "th event" << " in file " << dataNum << "satisfied the cut(all hits aredifferent layer)" << endl;
-                        cout << index << "th event" << " in file " << dataNum << "is four in a line" << endl;
-                    
+                        FOUR << index << "th event" << " in file " << dataNum << "is four in a line" << endl;
+                        //make the graph of energy of three in aline
+
+                        for (int j = 0; j < 48; j++)
+                        {
+                            if (EDEP[j] > 0)
+                            {
+                                FOUREn << EDEP[j] << endl;
+                            }                    
+                        } 
+
+                        
                     }
                     
-                    /*
+                    
                     if (count == 0)
                     {
-                        cout << index << "th event" << " in file " << dataNum << " satisfied the cut(all hits are different layer)" << endl;
+                        ONEHIT << index << "th event" << " in file " << dataNum << " satisfied the cut(all hits are different layer)" << endl;
+                        
+                        for (int j = 0; j < 48; j++)
+                        {
+                        if (EDEP[j] > 0)
+                        {
+                            ONEHITEn << EDEP[j] << endl;
+                        }
+                                   
+                        } 
+                        
                     }
-                    */
+                    
                     
                     
                     
@@ -238,6 +262,12 @@ void layerCheck_V2()
 
         }
 
+    
+
     }
+    FOUR.close();
+    ONEHIT.close();
+    FOUREn.close();
+    ONEHITEn.close();
 
 }
