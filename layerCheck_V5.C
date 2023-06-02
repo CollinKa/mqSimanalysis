@@ -1,7 +1,5 @@
-//negative enery deposit???
-//update three in a line(done)
-//why I can't see the 4 in a line?
-//data looks hit with less than 3 hit per slab-> check your code
+//6-1 for the event that pass the cut, hit on each slab are no larger than 3. How come?
+// it will be great to write a code that find pmt hit instead of slab hit, and then compare the result
 
 #include "TCanvas.h"
 #include "TTree.h"
@@ -45,12 +43,12 @@ void layerCheck_V5()
     //ofstream ONE("oneHitperLayer.txt");
     ofstream ONEE("oneHitperE.txt");//record the energy deposit on each slab 
     ofstream FOURHit("fourInalineSlabHits.txt");//record the number of hits on each slab 
-    ofstream ONEHITEn("oneHitperLayerSlabHits.txt");
-    ofstream FourE("FourinLINEE.txt")
-    //the output at
+    ofstream ONEHIT("oneHitperLayerSlabHits.txt");
+    ofstream FourE("FourinLINEE.txt");
 
 
-    for(int dataNum=10; dataNum < 150; dataNum++) //loop over 15% of withPhoton file
+
+    for(int dataNum=10; dataNum < 250; dataNum++) //loop over 25% of withPhoton file
     {
         fileDir="/net/cms17/cms17r0/schmitz/slabSimMuon/withPhotons/48slab/cosmicdir" + to_string(dataNum) + "/MilliQan.root";
         filename = "/net/cms17/cms17r0/schmitz/slabSimMuon/withPhotons/48slab/cosmicdir" + to_string(dataNum) + "/MilliQan.root";
@@ -64,7 +62,7 @@ void layerCheck_V5()
 
             int hitN = 0; //channel number
             int numScintHits = 0; //number of slab channal got hit for a event
-            float Edp = 0; //energy deposit 
+            float Edp = 0.0; //energy deposit 
             bool repeatness = false; //used to check if all hits are at different layers
             
             
@@ -81,7 +79,7 @@ void layerCheck_V5()
             for(int index = 0; index < nentries; index++)
             {
                 int slabHits[48] = {0}; // there are 48 slabs for slab detector. it register the number of hit on each slab
-                
+                float EDEP[48] = {0.0};
                 //the following four array is used to save the energy deposit for the pmts
                 //float EDEPpmt[144] = {0.0}; //there are 144 pmts
                 //int hitN = 0; //pmt channal number
@@ -111,15 +109,15 @@ void layerCheck_V5()
                     {
                         hitN = myROOTEvent->GetScintRHits()->at(h)->GetCopyNo() - 18; 
                         slabHits[hitN]++;
-                        //Edp = myROOTEvent->GetScintRHits()->at(h)->GetEDep();
+                        Edp = myROOTEvent->GetScintRHits()->at(h)->GetEDep();
                         //cout << "Slab no: " << hitN << " energy of this hit:" << Edp << endl; 
-                        //EDEP[hitN] = EDEP[hitN] + Edp; //sum up the energy for a same slab
+                        EDEP[hitN] = EDEP[hitN] + Edp; //sum up the energy for a same slab
 
                         
                     }
 
 
-                    //current issue add array of pmy hits
+                    
                     for (int j = 0; j < 48; j++)
                     {
                         if (slabHits[j] > 0) 
@@ -191,7 +189,9 @@ void layerCheck_V5()
                             {
                                 if (slabHits[j] > 0)
                                 {
-                                    FOUREn << slabHits[j] << endl;
+                                    FOURHit << slabHits[j] << endl;
+                                    FourE << EDEP[j] << endl;
+
                                 }                    
                             } 
 
@@ -207,7 +207,9 @@ void layerCheck_V5()
                             {
                             if (slabHits[j] > 0)
                             {
-                                ONEHITEn << slabHits[j] << endl;
+                                ONEHIT << slabHits[j] << endl;
+                                ONEE << EDEP[j] << endl;
+                                
                             }
                                     
                             } 
@@ -230,9 +232,9 @@ void layerCheck_V5()
     
 
     }
-    FOUR.close();
+    ONEE.close();
+    FOURHit.close();
     ONEHIT.close();
-    FOUREn.close();
-    ONEHITEn.close();
+    FourE.close();
 
 }
