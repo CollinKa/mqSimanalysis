@@ -1,6 +1,25 @@
+//after these cut, one hit per layer is impossible
+/*
+end of channal looping for one evnet
+slab channal:3
+slab channal:6
+end of channal looping for one evnet
+
+
+end of channal looping for one evnet
+slab channal:0
+slab channal:18
+end of channal looping for one evnet
+
+there should be one event that pass the hit but cant be seen. how come? possibly didnt pass the energy cut
+
+6-4 loose the cut in one layer can have at most 2 hits, add some debug message
+
+6-5 remove energy check and extract energy distribution to see how does data look like.
+
+*/
 #include "TCanvas.h"
 #include "TTree.h"
-#include "TGaxis.h"
 #include "TStyle.h"
 #include "TFile.h"
 #include <iostream>
@@ -98,13 +117,15 @@ void layerCheck_V6()
                 {
                     slabChan = 0;
                     hitN = myROOTEvent->GetPMTRHits()->at(h)->GetPMTNumber();
-                    //cout << "hitN:" << hitN << endl; //debug
+                    cout << "hitN:" << hitN << endl; //debug
                     //convert the pmt number to corresponding slab channal
                     int j = ((hitN-18)/4);
                     layerNum = j%4;
                     rowNum =(j)/12;
                     columnNum = ((j)%12)/4;
-                    slabChan = layerNum + 12 * rowNum + 4 * columnNum;
+                    slabChan = layerNum + 12 * rowNum + 4 * columnNum; //did I mess this up?
+                    cout << "layerNum:" << layerNum << " rowNum:" << rowNum << " columnNum:" << columnNum << endl;//debug
+                    cout << "slab number:" <<  slabChan << endl;//debug
                     
                     //if (slabChan > 48)
                     //{
@@ -114,7 +135,7 @@ void layerCheck_V6()
                     numTPMThits++;
 
                 }
-                cout << "end of channal looping for one evnet" << endl;
+                
                 float totalEdp = 0.0;
 
                 for (int h =0; h < numScintHits; h++)
@@ -128,16 +149,26 @@ void layerCheck_V6()
                         
                 }
                 //debug
-                //look like the code can't reach here
-                cout << "numTPMThits:" << numTPMThits << endl;
-                cout << "totalEdp:" << totalEdp << endl;
+                
 
                 //if((numTPMThits <= 400) && (totalEdp < 1))
                 //it took me a while for no seeing any data, change the cut
-                if((numTPMThits <= 4000) && (totalEdp < 10))
+                if((numTPMThits <= 1000) && (totalEdp <= 1))
+                //if((numTPMThits <= 1000) && (totalEdp > 0 ))
                 {   
-                    
-
+                    cout << "numTPMThits:" << numTPMThits << endl;
+                    cout << "totalEdp:" << totalEdp << endl;
+                    //debug for loop over slabHits and EDEP array and print the channal
+                    for (int j = 0; j < 48; j++)
+                    {
+                        //if ((slabHits[j] > 0) && (EDEP[j]>0))
+                        //{   
+                            int slablayer = j % 4;
+                            cout << "slab channal:" << j <<" energy of slab:" << EDEP[j] << "slab layer:" << slablayer << " totalHits: "<< slabHits[j] <<endl;
+                            // looks like slabHits array assignment has issue
+                        //}
+                    }
+                    cout << "end of channal looping for one evnet" << endl;
 
                     
                     for (int j = 0; j < 48; j++)
@@ -160,7 +191,8 @@ void layerCheck_V6()
 
 
 
-                    if (slapHit == 4) //four slabs got hit
+                    //if (slapHit == 4) //four slabs got hit
+                    if (slapHit >= 2)
                     {   
                         int count =0; //check if a single layer has multiple hits
                         bool columnCheck = false;
@@ -168,7 +200,7 @@ void layerCheck_V6()
 
                         for (int n =0; n < 4; n++)
                         {
-                            if (layerarray[n] > 1)
+                            if (layerarray[n] >= 3) // loose the cut to allow a layer can have at most 2 hits.
                             {
                                 count ++;
                             }
@@ -253,7 +285,7 @@ void layerCheck_V6()
         }
 
     
-
+    cout << "end of file" << endl;
     }
     ONEE.close();
     FOURHit.close();
