@@ -1,3 +1,9 @@
+//loop over the without-photon data
+//no -phton data has no pmt hits remove it
+//the cut is less than 0.13MeV per hit
+// please does source cosmicSetupSlab.sh again
+// this file is for non-photon data set
+
 
 #include "TCanvas.h"
 #include "TTree.h"
@@ -32,23 +38,34 @@ bool fileExists(const std::string& filename) {
 
 
 
-void layerCheck_V8()
+void layerCheck_V9()
 {
     TString fileDir;
     string filename;
-    ofstream ONEE("oneHitperEremain.txt");//record the energy deposit on each slab 
-    ofstream FOURHit("fourInalineSlabHitsremain.txt");//record the number of hits on each slab 
-    ofstream ONEHIT("oneHitperLayerSlabHitsremain.txt");
-    ofstream FourE("FourinLINEEremain.txt");
+    ofstream ONEE("oneHitperEnoPhoton.txt");//record the energy deposit on each slab 
+    //ofstream FOURHit("fourInalineSlabHitsremainnoPhoton.txt");//record the number of hits on each slab 
+    //ofstream ONEHIT("oneHitperLayerSlabHitsremainnoPhoton.txt");
+    ofstream FourE("FourinLINEEnoPhoton.txt");
+    ofstream Xint("xininoPhoton.txt");
+    //ofstream Xfin("XfinnoPhoton.txt");
+    ofstream Yint("YininoPhoton.txt");
+    //ofstream Yfin("YfinnoPhoton.txt");
+    ofstream Zint("ZininoPhoton.txt");
+    //ofstream Zfin("ZfinnoPhoton.txt");
+    //four in line position
+    ofstream ZintF("ZininoPhotonF.txt");
+    ofstream YintF("YininoPhotonF.txt");
+    ofstream XintF("xininoPhotonF.txt");
 
 
 
 
-    for(int dataNum=250; dataNum < 999; dataNum++) //loop over 25% of withPhoton file
+
+    for(int dataNum=0; dataNum < 999; dataNum++) //loop over 25% of withPhoton file
     {
     //int dataNum = 10;
-        fileDir="/net/cms17/cms17r0/schmitz/slabSimMuon/withPhotons/48slab/cosmicdir" + to_string(dataNum) + "/MilliQan.root";
-        filename = "/net/cms17/cms17r0/schmitz/slabSimMuon/withPhotons/48slab/cosmicdir" + to_string(dataNum) + "/MilliQan.root";
+        fileDir="/net/cms17/cms17r0/schmitz/slabSimMuon/noPhotons/48slab/cosmicdir" + to_string(dataNum) + "/MilliQan.root";
+        filename = "/net/cms17/cms17r0/schmitz/slabSimMuon/noPhotons/48slab/cosmicdir" + to_string(dataNum) + "/MilliQan.root";
 
         if (fileExists(filename)) 
         {
@@ -77,11 +94,20 @@ void layerCheck_V8()
             {
                 int slabHits[48] = {0}; // there are 48 slabs for slab detector. it register the number of hit on each slab
                 float EDEP[48] = {0.0};
-                int numPMTHits = 0;//number of pmt hit per event
+                //int numPMTHits = 0;//number of pmt hit per event
                 int layerarray[4] = {0};
                 int columnarray[3] = {0};
                 int rowarray[4] = {0};
                 int slapHit = 0; //how many slaps got hit in a event
+                //int numTPMThits = 0; //number of total pmt hits
+                int slabChan;
+
+                float initialPosition_x;
+                //float finalPosition_x;
+                float initialPosition_y;
+                //float finalPosition_y;
+                float initialPosition_z;
+                //float finalPosition_z;
 
 
                 bool FourInline = false;
@@ -90,11 +116,11 @@ void layerCheck_V8()
 
 
                 numScintHits=myROOTEvent->GetScintRHits()->size(); //how many particle hit the slabs in a event
-                numPMTHits = myROOTEvent->GetPMTRHits()->size();
-                int numTPMThits = 0; //number of total pmt hits
-                int slabChan;
+                //numPMTHits = myROOTEvent->GetPMTRHits()->size();
+                //int numberOfMuon = myROOTEvent->GetMuonTracks()->size();
 
-
+                //get the pmt hits that belongs to a same slab.
+                /*
                 for(int h=0; h < numPMTHits; h++)
                 {
                     slabChan = 0;
@@ -106,7 +132,10 @@ void layerCheck_V8()
                     numTPMThits++;
 
                 }
+                */
                 
+                
+                //get the energy deposit on each slab
                 float totalEdp = 0.0;
 
                 for (int h =0; h < numScintHits; h++)
@@ -117,13 +146,25 @@ void layerCheck_V8()
                     totalEdp = totalEdp + Edp;//in MeV
                         
                 }
-                //debug
                 
-                if((numTPMThits <= 1000) && (totalEdp <= 1))
+                //get the position of muon
+                //for(int h=0; h < numberOfMuon; h++)
+                //{
+                initialPosition_x = myROOTEvent->GetMuonTracks()->at(0)->GetFirstPositionX();
+                //finalPosition_x = myROOTEvent->GetMuonTracks()->at(0)->GetLastPositionX();
+                initialPosition_y = myROOTEvent->GetMuonTracks()->at(0)->GetFirstPositionY();
+                //finalPosition_y = myROOTEvent->GetMuonTracks()->at(0)->GetLastPositionY();
+                initialPosition_z = myROOTEvent->GetMuonTracks()->at(0)->GetFirstPositionZ();
+                //finalPosition_z = myROOTEvent->GetMuonTracks()->at(0)->GetLastPositionZ();
+                //}
+                
+                //if((numTPMThits <= 1000) && (totalEdp <= 1))
+                if(totalEdp <= 0.13) // ~less than 100 npehits
                 {                      
                     for (int j = 0; j < 48; j++)
                     {
-                        if ((slabHits[j] > 0) && (EDEP[j]>0)) 
+                        //if ((slabHits[j] > 0) && (EDEP[j]>0)) 
+                        if (EDEP[j]>0)
                         {
 
                             slapHit++;
@@ -191,34 +232,52 @@ void layerCheck_V8()
 
                             for (int j = 0; j < 48; j++)
                             {
-                                if (slabHits[j] > 0)
+                                //if (slabHits[j] > 0)
+                                if (EDEP[j] > 0)
                                 {
-                                    FOURHit << slabHits[j] << endl;
+                                    //FOURHit << slabHits[j] << endl;
                                     FourE << EDEP[j] << endl;
                                     //output totalEdp
 
                                 }                    
                             } 
+                            ZintF << initialPosition_z << endl;
+                            YintF << initialPosition_y << endl;
+                            XintF << initialPosition_x << endl;
 
                             
                         }
+                        
+                        
                         
                         //one hit per layer
                         if (count == 0)
                         {
                             //cout << index << "th event" << " in file " << dataNum << " satisfied the cut(all hits are at different layer)" << endl;
+                            Xint << initialPosition_x << endl;
+                            //Xfin << finalPosition_x << endl;
+                            Yint << initialPosition_y << endl;
+                            //Yfin << finalPosition_y << endl;
+                            Zint << initialPosition_z << endl;
+                            //Zfin << finalPosition_z << endl;
+
+
+
                             
                             for (int j = 0; j < 48; j++)
                             {
-                            if (slabHits[j] > 0)
+                            //if (slabHits[j] > 0)
+                            if (EDEP[j] > 0)
                             {
-                                ONEHIT << slabHits[j] << endl;
+                                //ONEHIT << slabHits[j] << endl;
                                 ONEE << EDEP[j] << endl;
                                 //output totalEdp
                                 
                             }
                                     
-                            } 
+                            }
+                            
+                             
                             
                         }
                         
@@ -235,10 +294,18 @@ void layerCheck_V8()
     cout << "end of file" << dataNum << endl;
     }
     ONEE.close();
-    FOURHit.close();
-    ONEHIT.close();
+    //FOURHit.close();
+    //ONEHIT.close();
     FourE.close();
-
+    Xint.close();
+    //Xfin.close();
+    Yint.close();
+    //Yfin.close();
+    Zint.close();
+    //Zfin.close();
+    ZintF.close();
+    YintF.close();
+    XintF.close();
 
 
 }
