@@ -36,21 +36,20 @@ void layerCheck_V8()
 {
     TString fileDir;
     string filename;
-    //ofstream FOUR("fourInalint.txt");
-    //ofstream ONE("oneHitperLayer.txt");
-    ofstream ONEE("oneHitperE.txt");//record the energy deposit on each slab 
-    ofstream FOURHit("fourInalineSlabHits.txt");//record the number of hits on each slab 
-    ofstream ONEHIT("oneHitperLayerSlabHits.txt");
-    ofstream FourE("FourinLINEE.txt");
+    ofstream ONEE("oneHitperEremain.txt");//record the energy deposit on each slab 
+    ofstream FOURHit("fourInalineSlabHitsremain.txt");//record the number of hits on each slab 
+    ofstream ONEHIT("oneHitperLayerSlabHitsremain.txt");
+    ofstream FourE("FourinLINEEremain.txt");
 
     //loose cut files - allow each layer has at most 2 hits and each event two layers got hit.
-    ofstream twoE("twoHitE.txt");//record the energy deposit on each slab 
+    //6/5 Ryan: we no longer need it
+    //ofstream twoE("twoHitE.txt");//record the energy deposit on each slab 
 
-    ofstream twoHIT("twoSlabHits.txt");
+    //ofstream twoHIT("twoSlabHits.txt");
 
 
 
-    for(int dataNum=10; dataNum < 250; dataNum++) //loop over 10% of withPhoton file
+    for(int dataNum=250; dataNum < 999; dataNum++) //loop over 25% of withPhoton file
     {
     //int dataNum = 10;
         fileDir="/net/cms17/cms17r0/schmitz/slabSimMuon/withPhotons/48slab/cosmicdir" + to_string(dataNum) + "/MilliQan.root";
@@ -175,6 +174,9 @@ void layerCheck_V8()
                         }    
                     }
 
+                    
+                    
+                    /*
                     //loose cut: at lease two slab got hit and two layers got hit
                     if (slapHit >= 2) //add loose cut
                     {   
@@ -212,6 +214,7 @@ void layerCheck_V8()
                         }
 
                     }
+                    */
 
 
                     //one hit per layer cut
@@ -279,7 +282,7 @@ void layerCheck_V8()
                         //one hit per layer
                         if (count == 0)
                         {
-                            cout << index << "th event" << " in file " << dataNum << " satisfied the cut(all hits are at different layer)" << endl;
+                            //cout << index << "th event" << " in file " << dataNum << " satisfied the cut(all hits are at different layer)" << endl;
                             
                             for (int j = 0; j < 48; j++)
                             {
@@ -309,14 +312,14 @@ void layerCheck_V8()
         }
 
     
-    //cout << "end of file" << dataNum << endl;
+    cout << "end of file" << dataNum << endl;
     }
     ONEE.close();
     FOURHit.close();
     ONEHIT.close();
     FourE.close();
-    twoHIT.close();
-    twoE.close();
+    //twoHIT.close();
+    //twoE.close();
 
 
 }

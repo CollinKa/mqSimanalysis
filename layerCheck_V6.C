@@ -66,6 +66,7 @@ void layerCheck_V6()
 
     for(int dataNum=10; dataNum < 250; dataNum++) //loop over 25% of withPhoton file
     {
+    //int dataNum = 10;
         fileDir="/net/cms17/cms17r0/schmitz/slabSimMuon/withPhotons/48slab/cosmicdir" + to_string(dataNum) + "/MilliQan.root";
         filename = "/net/cms17/cms17r0/schmitz/slabSimMuon/withPhotons/48slab/cosmicdir" + to_string(dataNum) + "/MilliQan.root";
 
@@ -92,6 +93,7 @@ void layerCheck_V6()
 
 
             for(int index = 0; index < nentries; index++)
+            //int index = 231;//debug
             {
                 int slabHits[48] = {0}; // there are 48 slabs for slab detector. it register the number of hit on each slab
                 float EDEP[48] = {0.0};
@@ -117,15 +119,20 @@ void layerCheck_V6()
                 {
                     slabChan = 0;
                     hitN = myROOTEvent->GetPMTRHits()->at(h)->GetPMTNumber();
-                    cout << "hitN:" << hitN << endl; //debug
+                    //cout << "hitN:" << hitN << endl; //debug
                     //convert the pmt number to corresponding slab channal
+                    if (hitN > 172)
+                    {
+                         cout << index << "th event" << " in file " << dataNum << " debug" << endl;
+                         //use index 231 file 10
+                    }
                     int j = ((hitN-18)/4);
                     layerNum = j%4;
                     rowNum =(j)/12;
                     columnNum = ((j)%12)/4;
                     slabChan = layerNum + 12 * rowNum + 4 * columnNum; //did I mess this up?
-                    cout << "layerNum:" << layerNum << " rowNum:" << rowNum << " columnNum:" << columnNum << endl;//debug
-                    cout << "slab number:" <<  slabChan << endl;//debug
+                    //cout << "layerNum:" << layerNum << " rowNum:" << rowNum << " columnNum:" << columnNum << endl;//debug
+                    //cout << "slab number:" <<  slabChan << endl;//debug
                     
                     //if (slabChan > 48)
                     //{
@@ -140,7 +147,13 @@ void layerCheck_V6()
 
                 for (int h =0; h < numScintHits; h++)
                 {
-                    hitN = myROOTEvent->GetScintRHits()->at(h)->GetCopyNo() - 18; 
+                    hitN = myROOTEvent->GetScintRHits()->at(h)->GetCopyNo() - 18;
+                    //debug
+                    //if (hitN > 46)
+                    //{
+                     //    cout << index << "th event" << " in file " << dataNum << " debug" << endl;
+                         //use index 231 file 10
+                    //}
                     Edp = myROOTEvent->GetScintRHits()->at(h)->GetEDep();
                     //cout << "Slab no: " << hitN << " energy of this hit:" << Edp << endl; 
                     EDEP[hitN] = EDEP[hitN] + Edp; //sum up the energy for a same slab
@@ -156,19 +169,19 @@ void layerCheck_V6()
                 if((numTPMThits <= 1000) && (totalEdp <= 1))
                 //if((numTPMThits <= 1000) && (totalEdp > 0 ))
                 {   
-                    cout << "numTPMThits:" << numTPMThits << endl;
-                    cout << "totalEdp:" << totalEdp << endl;
+                    //cout << "numTPMThits:" << numTPMThits << endl;
+                    //cout << "totalEdp:" << totalEdp << endl;
                     //debug for loop over slabHits and EDEP array and print the channal
                     for (int j = 0; j < 48; j++)
                     {
                         //if ((slabHits[j] > 0) && (EDEP[j]>0))
                         //{   
                             int slablayer = j % 4;
-                            cout << "slab channal:" << j <<" energy of slab:" << EDEP[j] << "slab layer:" << slablayer << " totalHits: "<< slabHits[j] <<endl;
+                            //cout << "slab channal:" << j <<" energy of slab:" << EDEP[j] << "slab layer:" << slablayer << " totalHits: "<< slabHits[j] <<endl;
                             // looks like slabHits array assignment has issue
                         //}
                     }
-                    cout << "end of channal looping for one evnet" << endl;
+                    //cout << "end of channal looping for one evnet" << endl;
 
                     
                     for (int j = 0; j < 48; j++)
